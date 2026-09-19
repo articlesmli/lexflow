@@ -1,7 +1,20 @@
 #!/usr/bin/env python3
 import sys
 import yaml
+import os
+import re
 
+def search_codebase(file_path, pattern):
+    """Searches a given source file for a specific code pattern or keyword."""
+    if not os.path.exists(file_path):
+        return False
+    
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            source_code = f.read()
+            return bool(re.search(pattern, source_code, re.IGNORECASE))
+    except Exception:
+        return False
 # Global list to track violations found during the audit
 violations_found = []
 
@@ -32,30 +45,56 @@ def check_article_5_prohibitions(manifest):
         )
 
 def check_article_10_data_governance(manifest):
-    """Evaluates High-Risk AI systems against Article 10 Data Governance requirements."""
+    """Evaluates High-Risk AI systems against Article 10 by verifying both manifest and code-level data governance frameworks."""
     risk_tier = manifest.get("risk_tier", "").lower()
-    has_policy = manifest.get("has_data_governance_policy", False)
+    has_policy_manifest = manifest.get("has_data_governance_policy", False)
     
-    if risk_tier == "high-risk" and not has_policy:
-        report_violation(
-            article_num="Article 10",
-            rule_name="Data Governance",
-            reason="High-risk AI systems must implement data governance and bias monitoring frameworks.",
-            remediation="Set 'has_data_governance_policy: true' and link your governance documentation in the manifest."
-        )
+    # Scan source code for data governance hooks, lineage logging, or tracking frameworks (e.g., MLflow, Wandb, or bias audits)
+    code_has_governance_hooks = search_codebase(
+        "main.py", 
+        r"def\s+.*audit_bias.*|import\s+mlflow|import\s+wandb|log_dataset_lineage|track_dataset"
+    )
+    
+    if risk_tier == "high-risk":
+        if not has_policy_manifest:
+            report_violation(
+                article_num="Article 10",
+                rule_name="Data Governance (Manifest Missing)",
+                reason="High-risk AI systems must declare a data governance policy in the manifest.",
+                remediation="Set 'has_data_governance_policy: true' once data governance frameworks are integrated."
+            )
+        elif not code_has_governance_hooks:
+            report_violation(
+                article_num="Article 10",
+                rule_name="Data Governance (Code Mismatch)",
+                reason="Manifest claims data governance, but no bias auditing functions, dataset lineage logging, or ML tracking frameworks were found in 'main.py'.",
+                remediation="Integrate a data tracking tool or implement a `log_dataset_lineage` / `audit_bias` function in your source code."
+            )
 
 def check_article_14_human_oversight(manifest):
-    """Evaluates High-Risk AI systems against Article 14 Human Oversight requirements."""
+    """Evaluates High-Risk AI systems against Article 14 by verifying both manifest and source code."""
     risk_tier = manifest.get("risk_tier", "").lower()
-    has_oversight = manifest.get("has_human_oversight", False)
+    has_oversight_manifest = manifest.get("has_human_oversight", False)
     
-    if risk_tier == "high-risk" and not has_oversight:
-        report_violation(
-            article_num="Article 14",
-            rule_name="Human Oversight",
-            reason="High-risk AI systems must be designed to enable natural persons to oversee their operation.",
-            remediation="Set 'has_human_oversight: true' and ensure an oversight protocol is defined."
-        )
+    # Define what a real human oversight implementation looks like in code
+    # e.g., looking for a function named 'human_review' or a decorator like '@requires_approval'
+    code_has_oversight_hook = search_codebase("main.py", r"def\s+.*human_review.*|@requires_approval")
+    
+    if risk_tier == "high-risk":
+        if not has_oversight_manifest:
+            report_violation(
+                article_num="Article 14",
+                rule_name="Human Oversight (Manifest Missing)",
+                reason="High-risk AI systems must declare human oversight in the manifest.",
+                remediation="Set 'has_human_oversight: true' once implementation is complete."
+            )
+        elif not code_has_oversight_hook:
+            report_violation(
+                article_num="Article 14",
+                rule_name="Human Oversight (Code Mismatch)",
+                reason="Manifest claims human oversight, but no review functions or approval decorators were found in 'main.py'.",
+                remediation="Implement a human-in-the-loop review function or decorator in your source code."
+            )
 
 def check_article_52_transparency(manifest):
     """Evaluates AI systems against Article 52 Transparency and Synthetic Content Disclosure requirements."""
