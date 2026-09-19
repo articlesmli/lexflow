@@ -1,6 +1,6 @@
-name: "ProhibitedBiometricSurveillance"
-sector: "Law Enforcement"
-uses_biometrics: true
-is_customer_facing: false
-generates_synthetic_content: false
-target_audience: "children"
+name: "CustomerSupportChatbot"
+sector: "Retail"
+uses_biometrics: false
+is_customer_facing: true
+generates_synthetic_content: true
+target_audience: "general public"
