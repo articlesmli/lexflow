@@ -1,6 +1,9 @@
-name: "CustomerSupportChatbot"
-sector: "Retail"
+system_name: "RecruitmentAI"
+sector: "Employment"
+risk_tier: "high-risk"
 uses_biometrics: false
+has_data_governance_policy: true
+has_human_oversight: true
 is_customer_facing: true
-generates_synthetic_content: true
-target_audience: "general public"
+generates_synthetic_content: false
+has_synthetic_content_disclosure: true
