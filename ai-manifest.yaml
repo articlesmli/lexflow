@@ -1,6 +1,6 @@
-name: "CustomerSupportChatbot"
-sector: "Retail"
+system_name: "RecruitmentAI"
+sector: "Employment"
+risk_tier: "High-Risk"
 uses_biometrics: false
-is_customer_facing: true
-generates_synthetic_content: true
-target_audience: "general public"
+has_data_governance_policy: true
+has_human_oversight: false  # Missing oversight will trigger Article 14 violation

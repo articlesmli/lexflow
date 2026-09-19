@@ -3,7 +3,7 @@ set -euo pipefail
 
 MANIFEST_FILE="ai-manifest.yaml"
 # Adjust this to point to your main entry point or validator script (e.g., engine/validator.py or main.py)
-ENTRY_SCRIPT="main.py"
+ENTRY_SCRIPT="engine/validator.py"
 
 echo "=== Running LexFlow EU AI Act Compliance Linter ==="
 
