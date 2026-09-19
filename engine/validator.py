@@ -44,6 +44,33 @@ def check_article_10_data_governance(manifest):
             remediation="Set 'has_data_governance_policy: true' and link your governance documentation in the manifest."
         )
 
+def check_article_14_human_oversight(manifest):
+    """Evaluates High-Risk AI systems against Article 14 Human Oversight requirements."""
+    risk_tier = manifest.get("risk_tier", "").lower()
+    has_oversight = manifest.get("has_human_oversight", False)
+    
+    if risk_tier == "high-risk" and not has_oversight:
+        report_violation(
+            article_num="Article 14",
+            rule_name="Human Oversight",
+            reason="High-risk AI systems must be designed to enable natural persons to oversee their operation.",
+            remediation="Set 'has_human_oversight: true' and ensure an oversight protocol is defined."
+        )
+
+def check_article_52_transparency(manifest):
+    """Evaluates AI systems against Article 52 Transparency and Synthetic Content Disclosure requirements."""
+    generates_synthetic = manifest.get("generates_synthetic_content", False)
+    is_customer_facing = manifest.get("is_customer_facing", False)
+    has_disclosure = manifest.get("has_synthetic_content_disclosure", False)
+    
+    if (generates_synthetic or is_customer_facing) and not has_disclosure:
+        report_violation(
+            article_num="Article 52",
+            rule_name="Transparency & Synthetic Content Disclosure",
+            reason="AI systems generating synthetic content or interacting directly with natural persons must disclose that the user is interacting with an AI or that content is artificially generated.",
+            remediation="Set 'has_synthetic_content_disclosure: true' and ensure machine-readable marking or user notices are implemented."
+        )
+
 def validate_manifest():
     """Main orchestrator to load the manifest and execute all regulatory rule checks."""
     manifest_path = "ai-manifest.yaml"
@@ -67,6 +94,8 @@ def validate_manifest():
     # Execute rule checks
     check_article_5_prohibitions(manifest)
     check_article_10_data_governance(manifest)
+    check_article_14_human_oversight(manifest)
+    check_article_52_transparency(manifest)
     
     # Final gatekeeper decision based on tracked violations
     if len(violations_found) > 0:
