@@ -18,15 +18,28 @@ LexFlow is built around three core components:
 ## Repository Structure
 
 ```text
-lexflow/
+
+LexFlow/
+│
 ├── .github/
 │   └── workflows/
-│       └── compliance.yml   # GitHub Actions CI gatekeeper workflow
+│       └── compliance.yml          # GitHub Action: Triggers audit.sh on push/PR
+│
 ├── engine/
-│   └── validator.py         # Core Python validation and error formatting logic
+│   ├── __init__.py
+│   ├── classifier.py               # Reads and validates 'ai-manifest.yaml' files
+│   ├── parser.py                   # Reads and validates 'ai-manifest.yaml' files
+│   ├── rule_loader.py              # Parses partner's markdown rules
+│   └── evaluator.py                # Core logic matching profile to rules
+│
 ├── rules/
-│   └── eu_ai_act.md         # Markdown-based regulatory rulebook
+│   └── eu_ai_act_rules.md          # Dynamic legal rulebook maintained by your partner
+│
 ├── tests/
-│   └── test_engine.py       # Unit tests for compliance rules via pytest
-├── audit.sh                 # Shell script runner for local/CI audits
-└── ai-manifest.yaml         # Metadata configuration file for the AI system
+│   └── test_compliance.py          # Automated test suite
+│
+├── main.py                         # Main entry point (runs the full pipeline)
+├── audit.sh                        # Bash script (CI/CD gatekeeper / compliance linter)
+├── Dockerfile                      # Containerizes the tool for secure, portable execution
+├── ai-manifest.yaml                # Developer configuration template inside target repos
+└── README.md                       # Project documentation for developers & legal teams
