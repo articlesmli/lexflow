@@ -1,4 +1,4 @@
-# LexFlow 🛡️🤖
+# LexFlow 
 
 > **Compliance-as-Code engine for automating EU AI Act regulatory auditing in CI/CD pipelines.**
 
